@@ -1,9 +1,8 @@
-package neointernship.chess.game.gameplay.moveaction.commands.allow;
+package neointernship.gameviewer;
 
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
-import neointernship.chess.game.gameplay.moveaction.commands.IMoveCommand;
+import neointernship.chess.game.gameplay.moveaction.commands.allow.*;
 import neointernship.chess.game.model.answer.IAnswer;
-import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
@@ -14,29 +13,18 @@ import neointernship.web.client.communication.message.TurnStatus;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/**
- * Реализация хода в нормальной ситуации
- */
-public class AllowMoveCommand implements IMoveCommand {
-
+public class MoveCommands {
     private final IMediator mediator;
-    private final IPossibleActionList possibleActionList;
     private final IBoard board;
-
-    private final IStoryGame storyGame;
 
     private final Queue<IAllowCommand> commandQueue;
 
 
-    public AllowMoveCommand(final IMediator mediator,
-                            final IPossibleActionList possibleActionList,
-                            final IBoard board,
-                            final IStoryGame storyGame) {
+    public MoveCommands(final IMediator mediator,
+                            final IBoard board) {
         this.mediator = mediator;
-        this.possibleActionList = possibleActionList;
         this.board = board;
 
-        this.storyGame = storyGame;
 
         // не менять последовательность добавления в очередь! Важна именно эта последовательность
         // каждая последующая команда уверена в том, что раз дошли до неё, значит остальные проверки
@@ -51,13 +39,11 @@ public class AllowMoveCommand implements IMoveCommand {
     }
 
 
-    @Override
     public TurnStatus execute(final IAnswer answer) {
         final IField startField = board.getField(answer.getStartX(), answer.getStartY());
         final Figure startFigure = mediator.getFigure(startField);
 
         final IField finishField = board.getField(answer.getFinalX(), answer.getFinalY());
-        storyGame.update(startFigure);
 
         final IAllowCommand currentCommand = getCommand(startField,finishField);
         currentCommand.execute(answer); // делаю ход
