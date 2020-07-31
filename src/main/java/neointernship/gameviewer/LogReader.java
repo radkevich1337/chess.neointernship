@@ -1,10 +1,7 @@
 package neointernship.gameviewer;
 
-import neointernship.chess.game.model.answer.Answer;
+import neointernship.chess.game.model.answer.AnswerSimbol;
 import neointernship.chess.game.model.answer.IAnswer;
-import neointernship.chess.game.model.playmap.field.Field;
-import neointernship.chess.game.model.playmap.field.IField;
-import neointernship.web.client.communication.message.TurnStatus;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,6 +11,8 @@ import java.io.IOException;
 public class LogReader {
     private String filePath;
     private String currentLine;
+    private String firstPlayerName;
+    private String secondPlayerName;
 
     private BufferedReader reader;
 
@@ -33,19 +32,29 @@ public class LogReader {
         return currentLine != null;
     }
 
-    public TurnStatus getTurnStatus() {
-        return TurnStatus.ERROR; //TODO
+    public IAnswer getAnswer() throws Exception {
+        if (readNextLine()){
+            final String[] answer = currentLine.split("\\s*((\\()|\\))");
+            return new AnswerSimbol(answer[1].charAt(0), answer[1].charAt(1), answer[3].charAt(0), answer[3].charAt(1));
+        }
+        throw new Exception(); //TODO
     }
 
-    public IAnswer getAnswer() {
-        return new Answer(); //TODO
+    public void setNames() throws Exception {
+        if (readNextLine()) {
+            final String[] names = currentLine.split("\\s*+(игроком|и|началась)");
+            firstPlayerName = names[1].trim();
+            secondPlayerName = names[3].trim();
+            return;
+        }
+        throw new Exception();
     }
 
     public String getFirstPlayerName() {
-        return null;  // TODO
+        return firstPlayerName; // TODO
     }
 
     public String getSecondPlayerName() {
-        return null; // TODO
+        return secondPlayerName; // TODO
     }
 }
