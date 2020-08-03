@@ -7,7 +7,6 @@ import neointernship.chess.game.model.playmap.field.IField;
 import java.util.ArrayList;
 
 public class Intermediary {
-
     public static ArrayList<IField> getList(final Figure figure, final IPotentialBasicPatterns basicAttackPatterns) {
         ArrayList<IField> list = new ArrayList<>();
 

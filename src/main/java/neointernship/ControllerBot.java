@@ -9,12 +9,11 @@ import neointernship.web.client.communication.message.ModelMessageReaction;
 import neointernship.web.client.communication.serializer.MessageSerializer;
 import neointernship.web.client.controller.Connection;
 import neointernship.web.client.player.APlayer;
-import neointernship.web.client.player.Bot;
+import neointernship.web.client.player.RandomBot;
 
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalTime;
-
 
 public class ControllerBot implements Runnable {
 
@@ -36,7 +35,7 @@ public class ControllerBot implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run()                                      {
         LocalTime startTime = LocalTime.now();
         modelMessageReaction = new ModelMessageReaction(socket);
 
@@ -59,7 +58,7 @@ public class ControllerBot implements Runnable {
     }
 
     private void initPlayer() {
-        player = new Bot(Color.BOTH, name, new InputVoid());
+        player = new RandomBot(Color.BOTH, name, new InputVoid());
     }
 
     private void startConnection() {

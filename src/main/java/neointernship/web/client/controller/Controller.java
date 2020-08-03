@@ -8,7 +8,7 @@ import neointernship.web.client.communication.message.MessageDto;
 import neointernship.web.client.communication.message.ModelMessageReaction;
 import neointernship.web.client.communication.serializer.MessageSerializer;
 import neointernship.web.client.player.APlayer;
-import neointernship.web.client.player.Bot;
+import neointernship.web.client.player.RandomBot;
 import neointernship.web.client.player.Player;
 import neointernship.web.client.player.PlayerType;
 
@@ -61,7 +61,7 @@ public class Controller {
             player = new Player(color, name, input);
         } else {
             name = "random bot";
-            player = new Bot(Color.BOTH, name, input);
+            player = new RandomBot(Color.BOTH, name, input);
         }
 
         ErrorLoggerClient.addLogger(name);

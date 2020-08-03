@@ -89,5 +89,4 @@ public class Player extends APlayer {
         input.endGame(enumGameState, color);
         boardView.dispose();
     }
-
 }

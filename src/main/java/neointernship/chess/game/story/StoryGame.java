@@ -20,7 +20,6 @@ public class StoryGame implements IStoryGame {
     public StoryGame(final IMediator mediator) {
         this.mediator = mediator;
         this.hoIsMove = new HashSet<>();
-
     }
 
     public StoryGame(StoryGame storyGame) {
