@@ -32,13 +32,14 @@ public class FiguresStartPositionRepository {
         };
     }
 
-    public Character[][] getStartPosition(final ChessType chessType) {
+    public Character[][] getStartPosition(final ChessType chessType, String string) {
         final Character[][] startPosition = new Character[size][size];
 
         String board = "";
         final String firstLine = chessType == ChessType.CLASSIC ? figuresForClassicChess() : figuresForFischerChess();
 
         board = firstLine + pawns() + voids() + pawns() + firstLine;
+        if (chessType == ChessType.OTHER) board = string;
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {

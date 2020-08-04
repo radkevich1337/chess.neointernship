@@ -50,10 +50,10 @@ public class CastlingCommand extends AbstractCommand implements IAllowCommand {
 
         Figure rook = mediator.getFigure(startFieldRook);
 
-        mediator.deleteConnection(startFieldKing);
+        /*mediator.deleteConnection(startFieldKing);
         mediator.deleteConnection(startFieldRook);
         mediator.addNewConnection(finishFieldKing, king);
-        mediator.addNewConnection(finalFieldRook, rook);
+        mediator.addNewConnection(finalFieldRook, rook);*/
     }
 
     @Override

@@ -24,7 +24,7 @@ public class Factory implements IFactory {
      */
     @Override
     public Figure createFigure(final Character pieceName, final Color color) {
-        Class<? extends Figure> pieceClass = pieceClassesRepository.getPieceClass(pieceName);
+        Class<? extends Figure> pieceClass = pieceClassesRepository.getPieceClass((char) (pieceName & 223));
         try {
             Constructor<? extends Figure> constructor = pieceClass.getConstructor(Color.class);
             return constructor.newInstance(color);

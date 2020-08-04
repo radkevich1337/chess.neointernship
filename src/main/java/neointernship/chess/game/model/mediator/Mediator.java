@@ -102,6 +102,8 @@ public class Mediator implements IMediator, Cloneable {
 
     @Override
     public Collection<Figure> getFigures(final Color color) {
+        assert (color != null);
+        assert (getFigures() != null);
         return getFigures()
                 .stream()
                 .filter(f -> f.getColor() == color)

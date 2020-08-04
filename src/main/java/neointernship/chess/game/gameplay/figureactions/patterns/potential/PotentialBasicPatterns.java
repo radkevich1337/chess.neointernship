@@ -207,8 +207,8 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
     }
 
     private void addIfCastling(final Figure king, final IField fieldKing, final Collection<IField> possibleAttackFields) {
-        // если король не ходил
-        if (!storyGame.isMove(king)) {
+        // если король не ходил todo костыль
+        if (!storyGame.isMove(king) && fieldKing.getYCoord() == 4) {
 
             for (final Figure rook : mediator.getFigures(king.getColor())) {
                 // если есть ладья которой не ходил

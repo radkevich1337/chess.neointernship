@@ -37,6 +37,7 @@ public class MoveCorrectnessValidator {
         for (Figure currentFigure : mediator.getFigures()) {
             if (currentFigure == startFigure) {
 
+                if (possibleActionList.getRealList(currentFigure) == null) possibleActionList.updateRealLists();
                 Collection<IField> fields = possibleActionList.getRealList(currentFigure);
 
                 if (fields.contains(finalField)) {

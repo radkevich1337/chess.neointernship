@@ -31,6 +31,12 @@ public class RandomBot extends APlayer {
         this.input = input;
     }
 
+    public RandomBot(final Color color, final String name) {
+        super(color, name);
+        this.random = new Random();
+        this.input = null;
+    }
+
     public void init(final IMediator mediator, final IBoard board, final Color color) {
         super.init(mediator, board, color);
         this.possibleActionList = new PossibleActionList(board, mediator, storyGame);

@@ -97,14 +97,14 @@ public class Lobby extends Thread {
     }
 
     private void initGameMap() {
-        final Character[][] figuresRepository = figuresStartPositionRepository.getStartPosition(chessTypes);
+        final Character[][] figuresRepository = figuresStartPositionRepository.getStartPosition(chessTypes, "");
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
                 final IField field = board.getField(i, j);
 
                 final Character currentChar = figuresRepository[i][j];
                 if (currentChar != FIELD_CHAR_EMPTY) {
-                    final Color color = i > 4 ? Color.WHITE : Color.BLACK;
+                    final Color color = currentChar < 'a' ? Color.WHITE : Color.BLACK;
                     final Figure figure = figureFactory.createFigure(currentChar, color);
 
                     mediator.addNewConnection(field, figure);

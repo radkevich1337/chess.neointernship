@@ -21,9 +21,9 @@ import neointernship.web.client.communication.message.TurnStatus;
 public class GameLoop implements IGameLoop {
     private final ActiveColorController activeColorController;
 
-    private final IGameStateController gameStateController;
+    private IGameStateController gameStateController;
 
-    private final IGameProcessController gameProcessController;
+    private IGameProcessController gameProcessController;
 
     private Color activeColor;
 
@@ -65,5 +65,25 @@ public class GameLoop implements IGameLoop {
     @Override
     public IGameState getMatchResult() {
         return gameStateController.getState();
+    }
+
+    @Override
+    public void setGameStateController(IGameStateController gameStateController) {
+        this.gameStateController = gameStateController;
+    }
+
+    @Override
+    public void setGameProcessController(IGameProcessController gameProcessController) {
+        this.gameProcessController = gameProcessController;
+    }
+
+    @Override
+    public IGameStateController getGameStateController() {
+        return gameStateController;
+    }
+
+    @Override
+    public IGameProcessController getGameProcessController() {
+        return gameProcessController;
     }
 }
