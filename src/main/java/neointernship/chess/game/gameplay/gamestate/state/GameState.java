@@ -12,6 +12,11 @@ public class GameState implements IGameState {
         this.color = color;
     }
 
+    public GameState(IGameState gameState) {
+        this.value = gameState.getValue();
+        this.color = gameState.getColor();
+    }
+
     @Override
     public EnumGameState getValue() {
         return value;

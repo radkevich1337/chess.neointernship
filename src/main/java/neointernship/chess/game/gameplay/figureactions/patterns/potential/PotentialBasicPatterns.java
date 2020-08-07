@@ -5,25 +5,38 @@ import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.figure.piece.Pawn;
 import neointernship.chess.game.model.figure.piece.Rook;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.Field;
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.chess.game.story.IStoryGame;
+import neointernship.chess.game.story.StoryGame;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class PotentialBasicPatterns implements IPotentialBasicPatterns {
     private final int boardSize;
     private final IMediator mediator;
     private final IBoard board;
     private final IStoryGame storyGame;
+    private List<Figure> attackList;
 
     public PotentialBasicPatterns(final IMediator mediator, final IBoard board, final IStoryGame storyGame) {
         this.mediator = mediator;
         this.board = board;
         boardSize = board.getSize();
         this.storyGame = storyGame;
+        this.attackList = new ArrayList<>();
+    }
+
+    public PotentialBasicPatterns(PotentialBasicPatterns potentialBasicPatterns) {
+        this.boardSize = potentialBasicPatterns.boardSize;
+        this.mediator = new Mediator(potentialBasicPatterns.mediator);
+        this.board = potentialBasicPatterns.board;
+        this.storyGame = new StoryGame(potentialBasicPatterns.storyGame);
+        this.attackList = potentialBasicPatterns.attackList;
     }
 
     public ArrayList<IField> getDiagonalFields(final Figure figure) {
@@ -281,8 +294,11 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
         final IField field = board.getField(newFieldXCoord, newFieldYCoord);
         final Figure figure = mediator.getFigure(field);
 
-        if (figure != null && figure.getColor() != color) {
-            possibleMoveList.add(field);
+        if (figure != null){
+            if (figure.getColor() != color){
+                possibleMoveList.add(field);
+            }
+            attackList.add(figure);
         }
     }
 
@@ -291,5 +307,13 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
                 || newFieldXCoord >= boardSize
                 || newFieldYCoord < 0
                 || newFieldYCoord >= boardSize;
+    }
+
+    public void clearAttackList(){
+        attackList.clear();
+    }
+
+    public List<Figure> getAttackList() {
+        return attackList;
     }
 }

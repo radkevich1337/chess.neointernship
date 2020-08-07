@@ -4,6 +4,7 @@ import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.playmap.field.IField;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IPotentialBasicPatterns {
     ArrayList<IField> getDiagonalFields(final Figure figure);
@@ -15,4 +16,8 @@ public interface IPotentialBasicPatterns {
     ArrayList<IField> getPawnFields(final Figure pawn);
 
     ArrayList<IField> getKingFields(final Figure king);
+
+    void clearAttackList();
+
+    List<Figure> getAttackList();
 }

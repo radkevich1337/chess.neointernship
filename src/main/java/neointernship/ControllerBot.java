@@ -9,6 +9,7 @@ import neointernship.web.client.communication.message.ModelMessageReaction;
 import neointernship.web.client.communication.serializer.MessageSerializer;
 import neointernship.web.client.controller.Connection;
 import neointernship.web.client.player.APlayer;
+import neointernship.web.client.player.BotOne;
 import neointernship.web.client.player.RandomBot;
 
 import java.io.*;
@@ -24,24 +25,30 @@ public class ControllerBot implements Runnable {
     private ModelMessageReaction modelMessageReaction;
     private APlayer player;
     private boolean endGame = false;
+    private String botType;
+    private Color color;
 
     private String name;
-    int gameTime;
+    LocalTime gameTime;
     private int i = 0;
 
-    public ControllerBot(int i) {
-        name = "bot № " + i;
+    public ControllerBot(int i, String botType, Color color) {
+        name = "bot" + i % 2;
         this.i = i;
+        this.botType = botType;
+        this.color = color;
     }
 
     @Override
-    public void run()                                      {
+    public void run() {
         LocalTime startTime = LocalTime.now();
         modelMessageReaction = new ModelMessageReaction(socket);
 
         startConnection();
 
         initPlayer();
+
+        ErrorLoggerClient.addLogger(player.getName());
 
         while (!endGame) {
             try {
@@ -51,14 +58,20 @@ public class ControllerBot implements Runnable {
                 modelMessageReaction.get(messageDto.getClientCodes()).execute(player, in, out);
                 if (messageDto.getClientCodes() == ClientCodes.END_GAME) endGame = true;
             } catch (final Exception e) {
-                ErrorLoggerClient.getLogger(player.getName()).logException(e);
+                //ErrorLoggerClient.getLogger(player.getName()).logException(e);
+                e.printStackTrace();
             }
         }
-        gameTime = startTime.getSecond() - LocalTime.now().getSecond();
+        gameTime = LocalTime.ofSecondOfDay(LocalTime.now().toSecondOfDay()  - startTime.toSecondOfDay() );
+        System.out.println(gameTime);
     }
 
     private void initPlayer() {
-        player = new RandomBot(Color.BOTH, name, new InputVoid());
+        if (botType == "One") {
+            player = new BotOne(color, name, new InputVoid());
+        } else {
+            player = new RandomBot(color, name, new InputVoid());
+        }
     }
 
     private void startConnection() {

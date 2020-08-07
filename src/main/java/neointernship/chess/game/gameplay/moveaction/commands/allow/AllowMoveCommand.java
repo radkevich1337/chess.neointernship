@@ -1,13 +1,16 @@
 package neointernship.chess.game.gameplay.moveaction.commands.allow;
 
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
+import neointernship.chess.game.gameplay.figureactions.PossibleActionList;
 import neointernship.chess.game.gameplay.moveaction.commands.IMoveCommand;
 import neointernship.chess.game.model.answer.IAnswer;
 import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.chess.game.story.IStoryGame;
+import neointernship.chess.game.story.StoryGame;
 import neointernship.web.client.communication.message.TurnStatus;
 
 import java.util.LinkedList;
@@ -41,6 +44,20 @@ public class AllowMoveCommand implements IMoveCommand {
         // каждая последующая команда уверена в том, что раз дошли до неё, значит остальные проверки
         // дали отрицательный результат
         commandQueue = new LinkedList<>();
+        commandQueue.add(new TransformationAfterCommand(board, mediator));
+        commandQueue.add(new TransformationBeforeCommand(board, mediator));
+        commandQueue.add(new AttackCommand(board, mediator));
+        commandQueue.add(new CastlingCommand(board, mediator));
+        commandQueue.add(new AisleTakeCommand(board, mediator));
+        commandQueue.add(new MoveCommand(board, mediator));
+    }
+
+    public AllowMoveCommand(AllowMoveCommand allowMoveCommand) {
+        this.mediator = new Mediator(allowMoveCommand.mediator);
+        this.possibleActionList = new PossibleActionList((PossibleActionList) allowMoveCommand.possibleActionList);
+        this.board = allowMoveCommand.board;
+        this.storyGame = new StoryGame((StoryGame) allowMoveCommand.storyGame);
+        this.commandQueue = new LinkedList<>();
         commandQueue.add(new TransformationAfterCommand(board, mediator));
         commandQueue.add(new TransformationBeforeCommand(board, mediator));
         commandQueue.add(new AttackCommand(board, mediator));

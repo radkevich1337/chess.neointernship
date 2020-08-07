@@ -5,6 +5,7 @@ import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.figure.piece.Pawn;
 import neointernship.chess.game.model.mediator.IMediator;
 import neointernship.chess.game.story.IStoryGame;
+import neointernship.chess.game.story.StoryGame;
 
 public class DrawFiftyStep implements IDrawController {
 
@@ -17,6 +18,12 @@ public class DrawFiftyStep implements IDrawController {
         this.storyGame = storyGame;
         countStep = 0;
         lastSizeMediator = 32;
+    }
+
+    public DrawFiftyStep(DrawFiftyStep drawFiftyStep) {
+        this.storyGame = new StoryGame((StoryGame) drawFiftyStep.storyGame);
+        this.countStep = drawFiftyStep.countStep;
+        this.lastSizeMediator = drawFiftyStep.lastSizeMediator;
     }
 
     /**

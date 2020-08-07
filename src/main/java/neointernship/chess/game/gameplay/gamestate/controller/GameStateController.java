@@ -1,13 +1,14 @@
 package neointernship.chess.game.gameplay.gamestate.controller;
 
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
+import neointernship.chess.game.gameplay.figureactions.PossibleActionList;
 import neointernship.chess.game.gameplay.gamestate.controller.draw.DrawStateController;
 import neointernship.chess.game.gameplay.gamestate.state.GameState;
 import neointernship.chess.game.gameplay.gamestate.state.IGameState;
 import neointernship.chess.game.gameplay.gamestate.update.FiguresHaveMovesComputation;
 import neointernship.chess.game.gameplay.gamestate.update.GameStateDefineLogic;
 import neointernship.chess.game.gameplay.kingstate.controller.IKingStateController;
-import neointernship.chess.game.gameplay.kingstate.controller.KingsStateController;
+import neointernship.chess.game.gameplay.kingstate.controller.KingStateController;
 import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.enums.EnumGameState;
 import neointernship.chess.game.model.enums.KingState;
@@ -34,8 +35,16 @@ public class GameStateController implements IGameStateController {
         gameStateDefineLogic = new GameStateDefineLogic();
 
         drawStateController = new DrawStateController(mediator, storyGame);
-        kingStateController = new KingsStateController(possibleActionList, mediator);
+        kingStateController = new KingStateController(possibleActionList, mediator);
+    }
 
+    public GameStateController(IGameStateController gameStateController) {
+        this.currentState = new GameState(gameStateController.getCurrentState());
+        this.possibleActionList = new PossibleActionList(gameStateController.getPossibleActionList());
+        this.figuresHaveMovesComputation = new FiguresHaveMovesComputation(gameStateController.getFiguresHaveMovesComputation());
+        this.gameStateDefineLogic = gameStateController.getGameStateDefineLogic();
+        this.drawStateController = new DrawStateController(gameStateController.getDrawStateController());
+        this.kingStateController = new KingStateController(gameStateController.getKingStateController());
     }
 
     @Override
@@ -66,5 +75,28 @@ public class GameStateController implements IGameStateController {
         }
     }
 
+    public IGameState getCurrentState() {
+        return currentState;
+    }
+
+    public IPossibleActionList getPossibleActionList() {
+        return possibleActionList;
+    }
+
+    public FiguresHaveMovesComputation getFiguresHaveMovesComputation() {
+        return figuresHaveMovesComputation;
+    }
+
+    public GameStateDefineLogic getGameStateDefineLogic() {
+        return gameStateDefineLogic;
+    }
+
+    public DrawStateController getDrawStateController() {
+        return drawStateController;
+    }
+
+    public IKingStateController getKingStateController() {
+        return kingStateController;
+    }
 }
 

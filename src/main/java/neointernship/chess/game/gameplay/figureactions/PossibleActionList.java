@@ -7,6 +7,7 @@ import neointernship.chess.game.gameplay.figureactions.patterns.real.RealBasicPa
 import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.chess.game.story.IStoryGame;
@@ -34,6 +35,22 @@ public class PossibleActionList implements IPossibleActionList {
 
         this.realFigureActions = new HashMap<>();
         this.potentialFigureAction = new HashMap<>();
+    }
+
+    public PossibleActionList(IPossibleActionList possibleActionList) {
+        this.mediator = new Mediator(possibleActionList.getMediator());
+        this.potentialPatterns = new PotentialBasicPatterns((PotentialBasicPatterns) possibleActionList.getPotentialPatterns());
+        this.realPatterns = new RealBasicPatterns((RealBasicPatterns) possibleActionList.getRealPatterns());
+
+        this.realFigureActions = new HashMap<>();
+        for (Figure figure : possibleActionList.getRealFigureActions().keySet()) {
+            realFigureActions.put(figure, possibleActionList.getPotentialFigureAction().get(figure));
+        }
+
+        this.potentialFigureAction = new HashMap<>();
+        for (Figure figure : possibleActionList.getPotentialFigureAction().keySet()) {
+            potentialFigureAction.put(figure, possibleActionList.getPotentialFigureAction().get(figure));
+        }
     }
 
     @Override
@@ -78,6 +95,35 @@ public class PossibleActionList implements IPossibleActionList {
     @Override
     public Collection<IField> getPotentialList(Figure figure) {
         return potentialFigureAction.get(figure);
+    }
+
+    @Override
+    public IMediator getMediator() {
+        return mediator;
+    }
+
+    @Override
+    public IPotentialBasicPatterns getPotentialPatterns() {
+        return potentialPatterns;
+    }
+
+    @Override
+    public IRealBasicPatterns getRealPatterns() {
+        return realPatterns;
+    }
+
+    @Override
+    public Map<Figure, Collection<IField>> getRealFigureActions() {
+        return realFigureActions;
+    }
+
+    @Override
+    public Map<Figure, Collection<IField>> getPotentialFigureAction() {
+        return potentialFigureAction;
+    }
+
+    public Map<Figure, List<Figure>> getAttackList() {
+        return Intermediary.getAttackList();
     }
 
     @Override

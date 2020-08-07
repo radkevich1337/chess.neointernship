@@ -32,6 +32,17 @@ public class MovesRepository {
         };
     }
 
+    public MovesRepository(MovesRepository movesRepository) {
+        this.allowMoveCommand = new AllowMoveCommand((AllowMoveCommand) movesRepository.allowMoveCommand);
+        this.restrictCommand = new RestrictMoveCommand((RestrictMoveCommand) movesRepository.restrictCommand);
+        this.actionCommandMap = new HashMap<MoveState, IMoveCommand>(){
+            {
+                put(MoveState.ALLOWED, allowMoveCommand);
+                put(MoveState.RESTRICT, restrictCommand);
+            }
+        };
+    }
+
     public IMoveCommand getCommand(final MoveState state) {
         return actionCommandMap.get(state);
     }

@@ -1,7 +1,10 @@
 package neointernship.chess.game.story;
 
 import neointernship.chess.game.model.figure.piece.Figure;
+import neointernship.chess.game.model.mediator.IMediator;
 import neointernship.chess.game.model.playmap.field.IField;
+
+import java.util.Set;
 
 public interface IStoryGame {
     /**
@@ -31,4 +34,9 @@ public interface IStoryGame {
      */
     void update(final Figure figure);
 
+    Set<Figure> getHoIsMove();
+
+    IMediator getMediator();
+
+    Figure getLastFigure();
 }

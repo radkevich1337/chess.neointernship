@@ -15,6 +15,13 @@ public class ActiveColorController implements IActiveColorController, IColorCont
         activeColor = black;
     }
 
+    public ActiveColorController(IActiveColorController activeColorController){
+        white = Color.WHITE;
+        black = Color.BLACK;
+
+        this.activeColor = activeColorController.getCurrentColor();
+    }
+
     @Override
     public void update() {
         activeColor = (activeColor != white) ? white : black;

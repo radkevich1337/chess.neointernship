@@ -31,6 +31,12 @@ public class RealBasicPatterns implements IRealBasicPatterns {
         this.storyGame = storyGame;
     }
 
+    public RealBasicPatterns(RealBasicPatterns realBasicPatterns) {
+        this.mediator = new Mediator(realBasicPatterns.mediator);
+        this.board = realBasicPatterns.board;
+        this.storyGame = new StoryGame(realBasicPatterns.storyGame);
+    }
+
     @Override
     public Collection<IField> getRealMoveList(Figure figure, Collection<IField> potentialMoveList) {
         IAllowCommand command;
@@ -42,7 +48,7 @@ public class RealBasicPatterns implements IRealBasicPatterns {
         for (IField finishField : potentialMoveList) {
 
             IMediator newMediator = new Mediator(mediator);
-            IStoryGame newStoryGame = new StoryGame((StoryGame) storyGame);
+            IStoryGame newStoryGame = new StoryGame(storyGame);
             IPossibleActionList newPossibleActionList = new PossibleActionList(board, newMediator, newStoryGame);
 
             AllowMoveCommand allowMoveCommand =

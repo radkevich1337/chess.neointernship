@@ -1,6 +1,7 @@
 package neointernship.chess.game.gameplay.loop;
 
 import neointernship.chess.game.gameplay.activecolorcontroller.ActiveColorController;
+import neointernship.chess.game.gameplay.activecolorcontroller.IActiveColorController;
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
 import neointernship.chess.game.gameplay.gameprocesscontroller.GameProcessController;
 import neointernship.chess.game.gameplay.gameprocesscontroller.IGameProcessController;
@@ -25,6 +26,10 @@ public class GameLoop implements IGameLoop {
 
     private IGameProcessController gameProcessController;
 
+    private IMediator mediator;
+    private IPossibleActionList possibleActionList;
+    private IStoryGame storyGame;
+
     private Color activeColor;
 
     public GameLoop(final IMediator mediator,
@@ -33,11 +38,23 @@ public class GameLoop implements IGameLoop {
                     final ActiveColorController activeColorController,
                     final IStoryGame storyGame) {
 
+        this.mediator = mediator;
+        this.possibleActionList = possibleActionList;
+        this.storyGame = storyGame;
+
+
         this.activeColorController = activeColorController;
 
         gameStateController = new GameStateController(possibleActionList, mediator, storyGame);
 
         gameProcessController = new GameProcessController(mediator, possibleActionList, board, storyGame);
+    }
+
+    public GameLoop(IGameLoop gameLoop) {
+        this.activeColorController = new ActiveColorController(gameLoop.getActiveColorController());
+        this.gameStateController = new GameStateController(gameLoop.getGameStateController());
+        this.gameProcessController = new GameProcessController(gameLoop.getGameProcessController());
+        this.activeColor = gameLoop.getActiveColor();
     }
 
     /**
@@ -85,5 +102,25 @@ public class GameLoop implements IGameLoop {
     @Override
     public IGameProcessController getGameProcessController() {
         return gameProcessController;
+    }
+
+    public ActiveColorController getActiveColorController() {
+        return activeColorController;
+    }
+
+    public Color getActiveColor() {
+        return activeColor;
+    }
+
+    public IMediator getMediator() {
+        return mediator;
+    }
+
+    public IPossibleActionList getPossibleActionList() {
+        return possibleActionList;
+    }
+
+    public IStoryGame getStoryGame() {
+        return storyGame;
     }
 }

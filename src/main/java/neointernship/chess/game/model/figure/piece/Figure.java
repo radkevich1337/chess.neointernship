@@ -11,7 +11,7 @@ public abstract class Figure {
     private final String name;
     private final char gameSymbol;
     private final Color color;
-    private final short price;
+    private final int price;
 
     /**
      * Конструктор фигуры
@@ -21,7 +21,7 @@ public abstract class Figure {
      * @param color      цвет
      * @param price      ценность
      */
-    public Figure(final String name, final Character gameSymbol, final Color color, final short price) {
+    public Figure(final String name, final Character gameSymbol, final Color color, final int price) {
         this.name = name;
         this.gameSymbol = gameSymbol;
         this.color = color;
@@ -40,7 +40,7 @@ public abstract class Figure {
         return color;
     }
 
-    public short getPrice() {
+    public int getPrice() {
         return price;
     }
 

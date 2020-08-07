@@ -4,6 +4,6 @@ import neointernship.chess.game.model.enums.Color;
 
 public class King extends Figure {
     public King(Color color) {
-        super("King", 'K', color, Short.MAX_VALUE);
+        super("King", 'K', color, 100000);
     }
 }

@@ -30,6 +30,4 @@ public interface IMediator {
     void deleteConnection(final IField field);
 
     void clear();
-
-
 }

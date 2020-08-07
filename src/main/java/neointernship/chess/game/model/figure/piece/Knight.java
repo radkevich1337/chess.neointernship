@@ -4,6 +4,6 @@ import neointernship.chess.game.model.enums.Color;
 
 public class Knight extends Figure {
     public Knight(Color color) {
-        super("Knight", 'N', color, (short) 3);
+        super("Knight", 'N', color, 288);
     }
 }

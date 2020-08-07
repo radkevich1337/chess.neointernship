@@ -2,6 +2,7 @@ package neointernship.chess.game.story;
 
 import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.field.IField;
 
 import java.util.HashSet;
@@ -22,11 +23,14 @@ public class StoryGame implements IStoryGame {
         this.hoIsMove = new HashSet<>();
     }
 
-    public StoryGame(StoryGame storyGame) {
-        this.mediator = storyGame.mediator;
+    public StoryGame(IStoryGame storyGame) {
+        this.mediator = new Mediator(storyGame.getMediator());
         this.hoIsMove = new HashSet<>();
 
-        this.hoIsMove.addAll(storyGame.hoIsMove);
+        this.hoIsMove.addAll(storyGame.getHoIsMove());
+
+        this.lastFigure = storyGame.getLastFigure();
+        this.lastField = storyGame.getLastField();
     }
 
     @Override
@@ -42,6 +46,21 @@ public class StoryGame implements IStoryGame {
     @Override
     public IField getLastField() {
         return lastField;
+    }
+
+    @Override
+    public Set<Figure> getHoIsMove() {
+        return hoIsMove;
+    }
+
+    @Override
+    public IMediator getMediator() {
+        return mediator;
+    }
+
+    @Override
+    public Figure getLastFigure() {
+        return lastFigure;
     }
 
     @Override

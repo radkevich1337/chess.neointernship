@@ -5,6 +5,6 @@ import neointernship.chess.game.model.enums.Color;
 
 public class Rook extends Figure {
     public Rook(Color color) {
-        super("Rook", 'R', color, (short) 5);
+        super("Rook", 'R', color, 480);
     }
 }

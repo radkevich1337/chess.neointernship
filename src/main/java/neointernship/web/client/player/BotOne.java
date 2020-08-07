@@ -9,6 +9,7 @@ import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.IField;
+import neointernship.web.client.AI.TurnGenerator;
 import neointernship.web.client.GUI.Input.IInput;
 import neointernship.web.client.GUI.board.view.BoardView;
 import neointernship.web.client.communication.message.ClientCodes;
@@ -18,20 +19,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class RandomBot extends APlayer {
+public class BotOne extends APlayer {
+    private static final int DEPTH = 1;
 
     private BoardView boardView;
     private IPossibleActionList possibleActionList;
     private final Random random;
     private final IInput input;
+    private TurnGenerator turnGenerator;
 
-    public RandomBot(final Color color, final String name, final IInput input) {
+    public BotOne(final Color color, final String name, final IInput input) {
         super(color, name);
         this.random = new Random();
         this.input = input;
     }
 
-    public RandomBot(final Color color, final String name) {
+    public BotOne(final Color color, final String name) {
         super(color, name);
         this.random = new Random();
         this.input = null;
@@ -40,9 +43,11 @@ public class RandomBot extends APlayer {
     public void init(final IMediator mediator, final IBoard board, final Color color) {
         super.init(mediator, board, color);
         this.possibleActionList = new PossibleActionList(board, mediator, storyGame);
+        this.possibleActionList.updateRealLists();
 
         this.boardView = new BoardView(mediator, board);
         if (!input.isVoid()) boardView.display();
+        this.turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color);
     }
 
     @Override
@@ -56,31 +61,15 @@ public class RandomBot extends APlayer {
 
     @Override
     public String getAnswer() {
-
-        final List<Figure> figures = (List<Figure>) mediator.getFigures(getColor());
-        List<IField> fields;
-        Figure figure;
-        int index;
         String turn = "";
 
         final List<Character> integers = Arrays.asList('8', '7', '6', '5', '4', '3', '2', '1');
         final List<Character> chars = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
 
-        possibleActionList.updateRealLists();
+        IAnswer answer = turnGenerator.getAnswer(DEPTH);
 
-        do {
-            index = random.nextInt(figures.size());
-            figure = figures.get(index);
-            fields = (List<IField>) possibleActionList.getRealList(figure);
-        } while (fields.isEmpty());
-
-        index = random.nextInt(fields.size());
-        final IField finalField = fields.get(index);
-
-        final IField startField = mediator.getField(figure);
-
-        turn += turn + chars.get(startField.getYCoord()) + integers.get(startField.getXCoord()) + "-" +
-                chars.get(finalField.getYCoord()) + integers.get(finalField.getXCoord());
+        turn += turn + chars.get(answer.getStartY()) + integers.get(answer.getStartX()) + "-" +
+                chars.get(answer.getFinalY()) + integers.get(answer.getFinalX());
 
         return turn;
     }

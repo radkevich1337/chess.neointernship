@@ -5,6 +5,7 @@ import neointernship.chess.game.gameplay.gamestate.state.IGameState;
 import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.enums.EnumGameState;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.story.IStoryGame;
 
 import java.util.Collection;
@@ -30,6 +31,20 @@ public class DrawStateController {
         actualState = EnumGameState.ALIVE;
     }
 
+    public DrawStateController(DrawStateController drawStateController) {
+        this.mediator = new Mediator(drawStateController.mediator);
+        this.actualState = drawStateController.actualState;
+
+        this.drawControllers = new HashSet<>();
+
+        for (IDrawController drawController : drawStateController.drawControllers) {
+            if (drawController.getClass() != DrawFiftyStep.class) {
+                drawControllers.add(drawController);
+            } else {
+                drawControllers.add(new DrawFiftyStep((DrawFiftyStep) drawController));
+            }
+        }
+    }
 
     public void update() {
         for (final IDrawController drawController : drawControllers) {

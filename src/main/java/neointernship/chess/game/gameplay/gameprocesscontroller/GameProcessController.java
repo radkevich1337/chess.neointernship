@@ -28,6 +28,12 @@ public class GameProcessController implements IGameProcessController {
         moveCorrectnessValidator = new MoveCorrectnessValidator(mediator, possibleActionList, board);
     }
 
+    public GameProcessController(IGameProcessController gameProcessController) {
+        this.movesRepository = new MovesRepository(gameProcessController.getMovesRepository());
+        this.moveCorrectnessValidator = new MoveCorrectnessValidator(gameProcessController.getMoveCorrectnessValidator());
+        this.turnStatus = gameProcessController.getTurnStatus();
+    }
+
     @Override
     public void makeTurn(final Color color, final IAnswer answer) {
         final MoveState moveState = moveCorrectnessValidator.check(color, answer);
@@ -38,5 +44,15 @@ public class GameProcessController implements IGameProcessController {
     @Override
     public TurnStatus getTurnStatus() {
         return turnStatus;
+    }
+
+    @Override
+    public MovesRepository getMovesRepository() {
+        return movesRepository;
+    }
+
+    @Override
+    public MoveCorrectnessValidator getMoveCorrectnessValidator() {
+        return moveCorrectnessValidator;
     }
 }
