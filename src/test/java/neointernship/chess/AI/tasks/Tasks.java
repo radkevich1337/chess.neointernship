@@ -1,13 +1,8 @@
 package neointernship.chess.AI.tasks;
 
 import neointernship.chess.game.gameplay.activecolorcontroller.ActiveColorController;
-import neointernship.chess.game.gameplay.activecolorcontroller.IActiveColorController;
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
 import neointernship.chess.game.gameplay.figureactions.PossibleActionList;
-import neointernship.chess.game.gameplay.gameprocesscontroller.GameProcessController;
-import neointernship.chess.game.gameplay.gameprocesscontroller.IGameProcessController;
-import neointernship.chess.game.gameplay.gamestate.controller.GameStateController;
-import neointernship.chess.game.gameplay.gamestate.controller.IGameStateController;
 import neointernship.chess.game.gameplay.loop.GameLoop;
 import neointernship.chess.game.gameplay.loop.IGameLoop;
 import neointernship.chess.game.model.answer.AnswerSimbol;
@@ -26,6 +21,7 @@ import neointernship.chess.game.model.playmap.board.figuresstartposition.Figures
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.chess.game.story.IStoryGame;
 import neointernship.chess.game.story.StoryGame;
+import neointernship.web.client.AI.TurnGenerator;
 import neointernship.web.client.communication.message.TurnStatus;
 import neointernship.web.client.player.APlayer;
 import neointernship.web.client.player.RandomBot;
@@ -40,7 +36,7 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class OneTurn {
+public class Tasks {
     private static APlayer firstPlayer;
     private static APlayer secondPlayer;
 
@@ -58,14 +54,10 @@ public class OneTurn {
     private static Random random = new Random();
 
     private static IGameLoop gameLoop;
-
-    private static int i = 0;
+    private static TurnGenerator turnGenerator;
 
     @Before
     public void before() {
-        firstPlayer = new RandomBot(Color.WHITE, "bot1");
-        secondPlayer = new RandomBot(Color.BLACK, "bot2");
-
         board = new Board();
         figureFactory = new Factory();
         mediator = new Mediator();
@@ -76,16 +68,7 @@ public class OneTurn {
         activeColorController = new ActiveColorController();
 
         gameLoop = new GameLoop(mediator, possibleActionList, board, activeColorController, storyGame);
-        System.out.println("!");
-        i = 0;
-    }
-
-    private int H(IMediator mediator) {
-        int sum = 0;
-        for (Figure figure : mediator.getFigures()) {
-            sum += figure.getColor() == Color.WHITE ? figure.getPrice() : -1 * figure.getPrice();
-        }
-        return sum;
+        turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color);
     }
 
     private static void initGameMap(String string) {
@@ -106,109 +89,6 @@ public class OneTurn {
         possibleActionList.updateRealLists();
     }
 
-    public void updateGameLoop() {
-        IMediator newMediator = new Mediator(mediator);
-        IStoryGame newStoryGame = new StoryGame(storyGame);
-        IPossibleActionList newPossibleActionList = new PossibleActionList(board, newMediator, newStoryGame);
-
-        gameLoop.setGameProcessController(new GameProcessController(newMediator, newPossibleActionList, board, storyGame));
-        gameLoop.setGameStateController(new GameStateController(newPossibleActionList, newMediator, newStoryGame));
-    }
-
-    private class Pair{
-        private int sum;
-        private IAnswer answer;
-
-        public Pair(int sum, IAnswer answer) {
-            this.sum = sum;
-            this.answer = answer;
-        }
-
-        public int getSum() {
-            return sum;
-        }
-
-        public IAnswer getAnswer() {
-            return answer;
-        }
-    }
-
-    private Pair getAnswer(Color color, int height, IGameLoop gameLoop) {
-        //List<GameLoop> gameLoops = new ArrayList<>();
-        HashMap<Integer, Pair> map = new HashMap<>();
-        //List<Pair> list = new ArrayList<>();
-        /**/
-        Pair pair;
-        GameLoop copyGameLoop = null;
-        IMediator copyMediator;
-        IPossibleActionList copyPossibleActionList;
-        IStoryGame copyStoryGame;
-        IMediator mediator = gameLoop.getMediator();
-        IPossibleActionList possibleActionList = new PossibleActionList(board, mediator, new StoryGame(gameLoop.getStoryGame()));//gameLoop.getPossibleActionList();
-        possibleActionList.updateRealLists();
-        IAnswer newAnswer = null;
-        if (OneTurn.color == color) {
-            for (Figure figure : mediator.getFigures(color)) {
-                IField iField = mediator.getField(figure);
-                ActiveColorController copyActiveColorController = new ActiveColorController(gameLoop.getActiveColorController());
-                copyActiveColorController.update();
-                for (IField field : possibleActionList.getRealList(figure)) {
-                    i++;
-                    copyMediator = new Mediator(gameLoop.getMediator());
-                    copyStoryGame = new StoryGame(gameLoop.getStoryGame());
-                    copyPossibleActionList = new PossibleActionList(board, copyMediator, copyStoryGame);
-                    copyPossibleActionList.updateRealLists();
-
-                    copyGameLoop = new GameLoop(copyMediator, copyPossibleActionList, board,
-                            copyActiveColorController, copyStoryGame);
-                    newAnswer = new AnswerSimbol(iField.getXCoord(), iField.getYCoord(), field.getXCoord(), field.getYCoord(), (char) 0);
-                    copyGameLoop.doIteration(newAnswer);
-
-                    if (copyGameLoop.getGameStateController().getState().getValue() == EnumGameState.MATE){
-                        System.out.println(i);
-                        return new Pair(100000000, newAnswer);
-                    }
-
-                    if (height > 0) {
-                        pair = getAnswer(Color.swapColor(color), height - 1, copyGameLoop);
-                        map.put(pair.getSum(), new Pair(pair.getSum(), newAnswer));
-                    }else {
-                        map.put(H(copyGameLoop.getMediator()), new Pair(H(copyGameLoop.getMediator()), newAnswer));
-                    }
-                }
-            }
-        } else {
-            final List<Figure> figures = (List<Figure>) gameLoop.getMediator().getFigures(color);
-            List<IField> fields;
-            Figure figure;
-            int index;
-
-            gameLoop.getPossibleActionList().updateRealLists();
-
-            do {
-                index = random.nextInt(figures.size());
-                figure = figures.get(index);
-                fields = (List<IField>) gameLoop.getPossibleActionList().getRealList(figure);
-            } while (fields.isEmpty());
-
-            index = random.nextInt(fields.size());
-            final IField finalField = fields.get(index);
-
-            final IField startField = gameLoop.getMediator().getField(figure);
-
-            newAnswer = new AnswerSimbol(startField.getXCoord(), startField.getYCoord(),
-                    finalField.getXCoord(), finalField.getYCoord(), (char) 0);
-            if (height > 0) {
-                return getAnswer(Color.swapColor(color), height - 1, gameLoop);
-            }
-            return new Pair(H(gameLoop.getMediator()), newAnswer);
-        }
-
-        System.out.println(i);
-        int key = OneTurn.color == color ? Collections.max(map.keySet()) : Collections.min(map.keySet());
-        return map.get(key);
-    }
-
     @Test
     public void one() {
         String string = "........" +
@@ -222,10 +102,10 @@ public class OneTurn {
 
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE,2, gameLoop).getAnswer();
+
 
         gameLoop.getActiveColorController().update();
-        gameLoop.doIteration(answer);
+        gameLoop.doIteration(turnGenerator.getAnswer(2));
 
         assertEquals(gameLoop.getMatchResult().getValue(), EnumGameState.MATE);
     }
@@ -242,7 +122,7 @@ public class OneTurn {
                 ".....K.R";
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        IAnswer answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -262,7 +142,7 @@ public class OneTurn {
                 ".....RK.";
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        IAnswer answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -282,7 +162,7 @@ public class OneTurn {
                 "R.B...RK";
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        IAnswer answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -290,7 +170,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(0, 5, 1, 6, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -310,7 +190,7 @@ public class OneTurn {
                 "...R..K.";
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        IAnswer answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -318,7 +198,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(1, 7, 2, 7, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -326,7 +206,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(1, 5, 0, 7, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -346,7 +226,7 @@ public class OneTurn {
                 ".K...R..";
         initGameMap(string);
 
-        IAnswer answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        IAnswer answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -355,7 +235,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(0, 6, 1, 5, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -364,7 +244,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(1, 5, 2, 5, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -373,7 +253,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(2, 3, 3, 4, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -382,7 +262,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(2, 5, 3, 6, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -391,7 +271,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(3, 6, 4, 7, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -400,7 +280,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(4, 7, 4, 6, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 4, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
@@ -409,7 +289,7 @@ public class OneTurn {
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(new AnswerSimbol(3, 6, 4, 7, (char) 0));
 
-        answer = getAnswer(Color.WHITE, 2, gameLoop).getAnswer();
+        answer = turnGenerator.getAnswer(2);
 
         gameLoop.getActiveColorController().update();
         gameLoop.doIteration(answer);
