@@ -1,4 +1,4 @@
-package neointernship.web.client.player;
+package neointernship.web.client.player.Bots;
 
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
 import neointernship.chess.game.gameplay.figureactions.PossibleActionList;
@@ -14,12 +14,13 @@ import neointernship.web.client.GUI.Input.IInput;
 import neointernship.web.client.GUI.board.view.BoardView;
 import neointernship.web.client.communication.message.ClientCodes;
 import neointernship.web.client.communication.message.TurnStatus;
+import neointernship.web.client.player.APlayer;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class BotOne extends APlayer {
+public class BotTwo extends APlayer {
     private static final int DEPTH = 1;
 
     private BoardView boardView;
@@ -28,13 +29,13 @@ public class BotOne extends APlayer {
     private final IInput input;
     private TurnGenerator turnGenerator;
 
-    public BotOne(final Color color, final String name, final IInput input) {
+    public BotTwo(final Color color, final String name, final IInput input) {
         super(color, name);
         this.random = new Random();
         this.input = input;
     }
 
-    public BotOne(final Color color, final String name) {
+    public BotTwo(final Color color, final String name) {
         super(color, name);
         this.random = new Random();
         this.input = null;

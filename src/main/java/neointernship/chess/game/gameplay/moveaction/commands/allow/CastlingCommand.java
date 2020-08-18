@@ -76,7 +76,7 @@ public class CastlingCommand extends AbstractCommand implements IAllowCommand {
 
         KingIsAttackedComputation kingIsAttackedComputation = new KingIsAttackedComputation(possibleActionList, mediator);
         for (IField tempField : forCastling) {
-            if (kingIsAttackedComputation.fieldIsAttacked(tempField, colorFigure)) return false;
+            if (kingIsAttackedComputation.fieldIsAttacked(tempField, colorFigure) != 0) return false;
         }
         return true;
     }

@@ -31,12 +31,12 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
         this.attackList = new ArrayList<>();
     }
 
-    public PotentialBasicPatterns(PotentialBasicPatterns potentialBasicPatterns) {
-        this.boardSize = potentialBasicPatterns.boardSize;
-        this.mediator = new Mediator(potentialBasicPatterns.mediator);
-        this.board = potentialBasicPatterns.board;
-        this.storyGame = new StoryGame(potentialBasicPatterns.storyGame);
-        this.attackList = potentialBasicPatterns.attackList;
+    public PotentialBasicPatterns(IPotentialBasicPatterns potentialBasicPatterns) {
+        this.boardSize = potentialBasicPatterns.getBoardSize();
+        this.mediator = potentialBasicPatterns.getMediator();
+        this.board = potentialBasicPatterns.getBoard();
+        this.storyGame = potentialBasicPatterns.getStoryGame();
+        this.attackList = potentialBasicPatterns.getAttackList();
     }
 
     public ArrayList<IField> getDiagonalFields(final Figure figure) {
@@ -137,7 +137,13 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
                 currentField.getYCoord(),
                 possibleAttackFields);
 
-        addIfAisleTake(figure, possibleAttackFields);
+        if (figure.getColor() == Color.WHITE && currentField.getXCoord() == 3) {
+            addIfAisleTake(figure, possibleAttackFields);
+        }
+
+        if (figure.getColor() == Color.BLACK && currentField.getXCoord() == 4) {
+            addIfAisleTake(figure, possibleAttackFields);
+        }
 
         if (isFreePath) {
             if (currentField.getXCoord() == 1 || currentField.getXCoord() == 6) {
@@ -294,8 +300,8 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
         final IField field = board.getField(newFieldXCoord, newFieldYCoord);
         final Figure figure = mediator.getFigure(field);
 
-        if (figure != null){
-            if (figure.getColor() != color){
+        if (figure != null) {
+            if (figure.getColor() != color) {
                 possibleMoveList.add(field);
             }
             attackList.add(figure);
@@ -309,11 +315,27 @@ public class PotentialBasicPatterns implements IPotentialBasicPatterns {
                 || newFieldYCoord >= boardSize;
     }
 
-    public void clearAttackList(){
+    public void clearAttackList() {
         attackList.clear();
     }
 
     public List<Figure> getAttackList() {
         return attackList;
+    }
+
+    public int getBoardSize() {
+        return boardSize;
+    }
+
+    public IMediator getMediator() {
+        return mediator;
+    }
+
+    public IBoard getBoard() {
+        return board;
+    }
+
+    public IStoryGame getStoryGame() {
+        return storyGame;
     }
 }

@@ -8,6 +8,7 @@ import neointernship.web.client.communication.message.MessageDto;
 import neointernship.web.client.communication.message.ModelMessageReaction;
 import neointernship.web.client.communication.serializer.MessageSerializer;
 import neointernship.web.client.player.*;
+import neointernship.web.client.player.Bots.BotOne;
 
 import java.io.*;
 import java.net.Socket;

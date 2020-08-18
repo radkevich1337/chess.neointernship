@@ -1,12 +1,13 @@
 package neointernship.web.client.AI;
 
 import neointernship.chess.game.model.figure.piece.*;
+import neointernship.chess.game.model.playmap.field.IField;
 
 import java.util.HashMap;
 
 public class BoardPrice {
     private final int SIZE = 8;
-    private HashMap<Class, Integer[][]> boards;
+    private final HashMap<Class, Integer[][]> boards;
 
     public BoardPrice() {
         boards = new HashMap<>();
@@ -79,14 +80,14 @@ public class BoardPrice {
     }
 
     private void addKing() {
-        Integer[][] map = {{20, 20, 30, 0, 0, 10, 30, 20},
-                {15, 15, 0, 0, 0, 0, 15, 15},
+        Integer[][] map = {{10, 10, 30, 0, 0, 0, 30, 10},
+                {5, 5, -10, -10, -10, -10, 5, 5},
                 {10, 0, -20, -20, -20, -20, 0, 10},
                 {0, -10, -20, -20, -20, -20, -10, 0},
                 {0, -10, -20, -20, -20, -20, -10, 0},
                 {10, 0, -20, -20, -20, -20, 0, 10},
-                {15, 15, 0, 0, 0, 0, 15, 15},
-                {20, 20, 30, 0, 0, 10, 30, 20}};
+                {5, 5, -10, -10, -10, -10, 5, 5},
+                {10, 10, 30, 0, 0, 0, 30, 10}};
         boards.put(King.class, map);
     }
 

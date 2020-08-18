@@ -39,14 +39,16 @@ public final class KingIsAttackedComputation {
         return false;
     }
 
-    public boolean fieldIsAttacked(IField field, Color color) {
+    public int fieldIsAttacked(IField field, Color color) {
         Color opponentColor = Color.swapColor(color);
+        int count = 0;
+
         for (Figure figure : mediator.getFigures(opponentColor)) {
             Collection<IField> collection = possibleActionList.getPotentialList(figure);
             if (collection.contains(field)) {
-                return true;
+                count++;
             }
         }
-        return false;
+        return count;
     }
 }

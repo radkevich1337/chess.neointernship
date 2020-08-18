@@ -15,6 +15,8 @@ import java.util.Collection;
 })
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 public interface IMediator {
+    void updateMediator();
+
     IField getField(final Figure figure);
 
     Figure getFigure(final IField field);

@@ -31,10 +31,10 @@ public class RealBasicPatterns implements IRealBasicPatterns {
         this.storyGame = storyGame;
     }
 
-    public RealBasicPatterns(RealBasicPatterns realBasicPatterns) {
-        this.mediator = new Mediator(realBasicPatterns.mediator);
-        this.board = realBasicPatterns.board;
-        this.storyGame = new StoryGame(realBasicPatterns.storyGame);
+    public RealBasicPatterns(IRealBasicPatterns realBasicPatterns) {
+        this.mediator = realBasicPatterns.getMediator();
+        this.board = realBasicPatterns.getBoard();
+        this.storyGame = realBasicPatterns.getStoryGame();
     }
 
     @Override
@@ -71,5 +71,20 @@ public class RealBasicPatterns implements IRealBasicPatterns {
             }
         }
         return realList;
+    }
+
+    @Override
+    public IMediator getMediator() {
+        return mediator;
+    }
+
+    @Override
+    public IBoard getBoard() {
+        return board;
+    }
+
+    @Override
+    public IStoryGame getStoryGame() {
+        return storyGame;
     }
 }

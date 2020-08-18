@@ -29,7 +29,7 @@ public class MoveCorrectnessValidator {
     public MoveCorrectnessValidator(MoveCorrectnessValidator moveCorrectnessValidator) {
         this.mediator = new Mediator(moveCorrectnessValidator.mediator);
         this.board = moveCorrectnessValidator.board;
-        this.possibleActionList = new PossibleActionList((PossibleActionList) moveCorrectnessValidator.possibleActionList);
+        this.possibleActionList = new PossibleActionList(moveCorrectnessValidator.possibleActionList);
     }
 
     public MoveState check(final Color color, final IAnswer answer) {

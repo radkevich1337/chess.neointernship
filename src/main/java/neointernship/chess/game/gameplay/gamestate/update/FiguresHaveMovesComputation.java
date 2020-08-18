@@ -22,11 +22,11 @@ public class FiguresHaveMovesComputation {
 
     public FiguresHaveMovesComputation(FiguresHaveMovesComputation figuresHaveMovesComputation) {
         this.mediator = new Mediator(figuresHaveMovesComputation.mediator);
-        this.possibleActionList = new PossibleActionList((PossibleActionList) figuresHaveMovesComputation.possibleActionList);
+        this.possibleActionList = new PossibleActionList(figuresHaveMovesComputation.possibleActionList);
     }
 
     public boolean check(Color color) {
-        possibleActionList.updateRealLists();
+        //possibleActionList.updateRealLists();
 
         for (Figure figure : mediator.getFigures(color)) {
             Collection<IField> collection = possibleActionList.getRealList(figure);

@@ -12,17 +12,17 @@ import neointernship.chess.game.model.enums.EnumGameState;
 import neointernship.chess.game.model.figure.factory.Factory;
 import neointernship.chess.game.model.figure.factory.IFactory;
 import neointernship.chess.game.model.figure.piece.Figure;
+import neointernship.chess.game.model.figure.piece.King;
 import neointernship.chess.game.model.mediator.IMediator;
 import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.chess.game.story.IStoryGame;
 import neointernship.chess.game.story.StoryGame;
+import neointernship.web.client.communication.message.TurnStatus;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
+import java.time.LocalTime;
+import java.util.*;
 
 public class TurnGenerator {
     private final IBoard board;
@@ -36,6 +36,7 @@ public class TurnGenerator {
     private final Color color;
 
     private final IGameLoop gameLoop;
+    private static int i = 0;
 
     public TurnGenerator(IBoard board, IMediator mediator, IStoryGame storyGame,
                          IPossibleActionList possibleActionList, Color color) {
@@ -50,68 +51,99 @@ public class TurnGenerator {
         this.boardPrice = new BoardPrice();
 
         if (activeColorController.getCurrentColor() != color) activeColorController.update();
-        this.gameLoop = new GameLoop(mediator, possibleActionList, board, activeColorController, storyGame);
+        this.gameLoop = new GameLoop(this.mediator, this.possibleActionList, this.board, activeColorController, this.storyGame);
     }
 
-    private int H(IMediator mediator) {
+    private int H(IMediator mediator, IPossibleActionList possibleActionList) {
         int sum = 0;
         int figureSum;
+        boolean beatenField;
         int ch = 0;
         for (Figure figure : mediator.getFigures()) {
+            if (possibleActionList.getPotentialFigureAction().get(figure) == null) possibleActionList.updatePotentialLists();
             figureSum = 0;
-            for (Figure figure1 : possibleActionList.getAttackList().getOrDefault(figure, new ArrayList<>())){
-                if (figure.getColor() == figure1.getColor()) figureSum += figure1.getPrice() / 15;
-                else figureSum += figure1.getPrice() / 20;
-            }
+
             IField field = mediator.getField(figure);
+
+            for (Figure figure1 : possibleActionList.getAttackList().getOrDefault(figure, new ArrayList<>())) {
+                if (figure1.getClass() != King.class) {
+                    beatenField = figure.getColor() == Color.WHITE ?
+                            BeatenBoard.getBeatenFieldCount(mediator.getField(figure1)) > 0 :
+                            BeatenBoard.getBeatenFieldCount(mediator.getField(figure1)) < 0;
+                    float koef = 0.05f;
+                    if (!beatenField) koef *= 0.2;
+                    figureSum += figure1.getPrice() * koef;
+                }
+            }
+            beatenField = figure.getColor() == Color.WHITE ?
+                    BeatenBoard.getBeatenFieldCount(field) > 0 : BeatenBoard.getBeatenFieldCount(field) < 0;
+
             ch = figure.getColor() == Color.WHITE ? 1 : -1;
+            if (beatenField) ch *= 0.99;
             sum += ch * (figureSum + boardPrice.getBoard(figure)[field.getXCoord()][field.getYCoord()] +
-                    figure.getPrice() + possibleActionList.getRealFigureActions().get(figure).size() * 5);
+                    figure.getPrice() + possibleActionList.getRealList(figure).size() * 2);
         }
         return sum;
     }
 
-    private Pair getPair(Color color, int height, IGameLoop gameLoop) {
-        if (gameLoop == null) gameLoop = this.gameLoop;
-
+    private Pair getPair(Color color, int height, IGameLoop gameLoop, Integer ab) {
         HashMap<Integer, Pair> map = new HashMap<>();
         Pair pair;
-        GameLoop copyGameLoop;
-        IMediator copyMediator;
-        IPossibleActionList copyPossibleActionList;
-        IStoryGame copyStoryGame;
         IMediator mediator = gameLoop.getMediator();
-        IPossibleActionList possibleActionList = new PossibleActionList(board, mediator, gameLoop.getStoryGame());
-        possibleActionList.updateRealLists();
-        IAnswer newAnswer;
+        IPossibleActionList possibleActionList = gameLoop.getPossibleActionList();
+        //possibleActionList.updateRealLists(); //todo
+        IAnswer newAnswer = null;
+
+        Integer abInteger = null;
 
         for (Figure figure : mediator.getFigures(color)) {
             IField iField = mediator.getField(figure);
             ActiveColorController copyActiveColorController = new ActiveColorController(gameLoop.getActiveColorController());
             if (copyActiveColorController.getCurrentColor() != color) copyActiveColorController.update();
-            for (IField field : possibleActionList.getRealList(figure)) {
-                copyMediator = new Mediator(gameLoop.getMediator());
-                copyStoryGame = new StoryGame(gameLoop.getStoryGame());
-                copyPossibleActionList = new PossibleActionList(board, copyMediator, copyStoryGame);
-                copyPossibleActionList.updateRealLists();
+            for (IField field : possibleActionList.getRealList(figure)) { //todo
+                i++;
+                int hParent = H(gameLoop.getMediator(), gameLoop.getPossibleActionList());
+                IPossibleActionList copyPossibleActionList = new PossibleActionList(possibleActionList);
+                IMediator copyMediator = copyPossibleActionList.getMediator();
+                IStoryGame copyStoryGame = copyPossibleActionList.getStoryGame();
+                //copyPossibleActionList.updateRealLists();
+                //copyPossibleActionList.updatePotentialLists();
 
-                copyGameLoop = new GameLoop(copyMediator, copyPossibleActionList, board,
+                GameLoop copyGameLoop = new GameLoop(copyMediator, copyPossibleActionList, board,
                         copyActiveColorController, copyStoryGame);
-                newAnswer = new AnswerSimbol(iField.getXCoord(), iField.getYCoord(), field.getXCoord(), field.getYCoord(), (char) 0);
-                copyGameLoop.doIteration(newAnswer);
+                newAnswer = new AnswerSimbol(iField.getXCoord(), iField.getYCoord(), field.getXCoord(), field.getYCoord(), 'Q');
+
+                if (copyGameLoop.doIteration(newAnswer) == TurnStatus.ERROR) continue;
+
+                int h = H(copyMediator, copyPossibleActionList);
+                if (color == Color.WHITE ? h <= hParent - 10 : h >= hParent + 10) continue;
 
                 if (copyGameLoop.getGameStateController().getState().getValue() == EnumGameState.MATE) {
                     int sum = copyGameLoop.getActiveColorController().getCurrentColor() == Color.WHITE ? 1 : -1;
                     return new Pair(100000000 * sum, newAnswer);
+                } else if (copyGameLoop.getGameStateController().getState().getValue() != EnumGameState.ALIVE) {
+                    return new Pair(0, newAnswer);
                 }
 
                 if (height > 0) {
-                    pair = getPair(Color.swapColor(color), height - 1, copyGameLoop);
+                    pair = getPair(Color.swapColor(color), height - 1, copyGameLoop, abInteger);
                     map.put(pair.getSum(), new Pair(pair.getSum(), newAnswer));
+
+                    if (color == Color.WHITE) abInteger = Collections.max(map.keySet());
+                    else abInteger = Collections.min(map.keySet());
+
+                    if (ab != null) {
+                        int key = color == Color.WHITE ? ab - abInteger : abInteger - ab;
+                        if (key <= 0) break;
+                    }
                 } else {
-                    map.put(H(copyGameLoop.getMediator()), new Pair(H(copyGameLoop.getMediator()), newAnswer));
+                    map.put(h, new Pair(h, newAnswer));
                 }
             }
+        }
+
+        if (map.size() == 0) {
+            return new Pair(0, newAnswer);
         }
 
         int key = color == Color.WHITE ? Collections.max(map.keySet()) : Collections.min(map.keySet());
@@ -119,12 +151,19 @@ public class TurnGenerator {
     }
 
     public IAnswer getAnswer(int depth) {
-        return getPair(color, depth, gameLoop).getAnswer();
+        //i = 0;
+        possibleActionList.updateRealLists();
+        LocalTime startTime = LocalTime.now();
+        IAnswer answer = getPair(color, depth, gameLoop, null).getAnswer();
+        LocalTime gameTime = LocalTime.ofSecondOfDay(LocalTime.now().toSecondOfDay() - startTime.toSecondOfDay());
+        System.out.println(i + " " + gameTime + " " + H(mediator, possibleActionList));
+        return answer;
     }
 
     private class Pair {
         private final int sum;
         private final IAnswer answer;
+
 
         public Pair(int sum, IAnswer answer) {
             this.sum = sum;

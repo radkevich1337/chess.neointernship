@@ -24,7 +24,7 @@ public class RestrictMoveCommand implements IMoveCommand {
     public RestrictMoveCommand(RestrictMoveCommand restrictMoveCommand) {
         this.mediator = new Mediator(restrictMoveCommand.mediator);
         this.board = restrictMoveCommand.board;
-        this.possibleActionList = new PossibleActionList((PossibleActionList) restrictMoveCommand.possibleActionList);
+        this.possibleActionList = new PossibleActionList(restrictMoveCommand.possibleActionList);
     }
 
     @Override

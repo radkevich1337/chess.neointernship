@@ -28,6 +28,8 @@ public abstract class APlayer {
 
     public void init(final IMediator mediator, final IBoard board, final Color color) {
         this.mediator = mediator;
+        this.mediator.updateMediator();
+
         this.board = board;
         this.color = color;
         this.storyGame = new StoryGame(mediator);

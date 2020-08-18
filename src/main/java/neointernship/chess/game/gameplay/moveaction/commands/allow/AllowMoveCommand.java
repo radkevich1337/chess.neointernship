@@ -54,9 +54,9 @@ public class AllowMoveCommand implements IMoveCommand {
 
     public AllowMoveCommand(AllowMoveCommand allowMoveCommand) {
         this.mediator = new Mediator(allowMoveCommand.mediator);
-        this.possibleActionList = new PossibleActionList((PossibleActionList) allowMoveCommand.possibleActionList);
+        this.possibleActionList = new PossibleActionList(allowMoveCommand.possibleActionList);
         this.board = allowMoveCommand.board;
-        this.storyGame = new StoryGame((StoryGame) allowMoveCommand.storyGame);
+        this.storyGame = new StoryGame(allowMoveCommand.storyGame);
         this.commandQueue = new LinkedList<>();
         commandQueue.add(new TransformationAfterCommand(board, mediator));
         commandQueue.add(new TransformationBeforeCommand(board, mediator));
@@ -87,6 +87,4 @@ public class AllowMoveCommand implements IMoveCommand {
         }
         return null;
     }
-
-
 }

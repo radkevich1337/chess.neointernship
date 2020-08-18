@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class Field implements IField {
 
-    private final int x;
-    private final int y;
+    private final byte x;
+    private final byte y;
     private final Color color;
 
     /**
@@ -19,16 +19,16 @@ public class Field implements IField {
     private static final RepositiryChar repositiryChar = new RepositiryChar();
 
     public Field(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x = (byte) x;
+        this.y = (byte) y;
         color = initColor();
     }
 
     @JsonCreator
     public Field(final String field) {
         final String[] params = field.split(":");
-        this.x = Integer.parseInt(params[0].trim());
-        this.y = Integer.parseInt(params[1].trim());
+        this.x = Byte.parseByte(params[0].trim());
+        this.y = Byte.parseByte(params[1].trim());
         this.color = Color.parseColor(params[2].trim());
     }
 

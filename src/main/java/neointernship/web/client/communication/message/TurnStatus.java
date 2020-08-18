@@ -7,6 +7,7 @@ public enum TurnStatus {
     CASTLING("Рокировка"),
     TRANSFORMATION_BEFORE("Ход пешкой на конец доски"),
     TRANSFORMATION_AFTER("Превращение"),
+    Check("Проверка"),
     ERROR("Ошибочка вышла");
 
     private String message;

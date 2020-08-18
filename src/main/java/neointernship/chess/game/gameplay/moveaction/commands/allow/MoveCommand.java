@@ -9,7 +9,6 @@ import neointernship.web.client.communication.message.TurnStatus;
 
 public class MoveCommand extends AbstractCommand implements IAllowCommand {
 
-
     public MoveCommand(IBoard board, IMediator mediator) {
         super(board, mediator);
         turnStatus = TurnStatus.MOVE;

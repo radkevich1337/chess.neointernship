@@ -5,7 +5,9 @@ import neointernship.chess.game.gameplay.figureactions.patterns.real.IRealBasicP
 import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.figure.piece.Figure;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.model.playmap.field.IField;
+import neointernship.chess.game.story.IStoryGame;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +31,8 @@ public interface IPossibleActionList {
 
     IMediator getMediator();
 
+    IBoard getBoard();
+
     IPotentialBasicPatterns getPotentialPatterns();
 
     IRealBasicPatterns getRealPatterns();
@@ -38,5 +42,7 @@ public interface IPossibleActionList {
     Map<Figure, Collection<IField>> getPotentialFigureAction();
 
     Map<Figure, List<Figure>> getAttackList();
+
+    IStoryGame getStoryGame();
 }
 

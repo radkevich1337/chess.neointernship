@@ -15,9 +15,8 @@ public class MoreBots {
 
         for (int i = 0; i < countBot; i += 2) {
             controllerBots.add(new ControllerBot(i, "One", Color.WHITE));
-            controllerBots.add(new ControllerBot(i + 1, "One", Color.BLACK));
+            controllerBots.add(new ControllerBot(i + 1, "Two", Color.BLACK));
         }
-
 
         for (ControllerBot controllerBot : controllerBots) {
             threads.add(new Thread(controllerBot));
@@ -26,5 +25,4 @@ public class MoreBots {
             thread.start();
         }
     }
-
 }

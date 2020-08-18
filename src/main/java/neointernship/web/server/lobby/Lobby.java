@@ -27,6 +27,7 @@ import neointernship.chess.game.story.IStoryGame;
 import neointernship.chess.game.story.StoryGame;
 import neointernship.chess.logger.ErrorLoggerServer;
 import neointernship.chess.logger.GameLogger;
+import neointernship.chess.logger.MediatorLogger;
 import neointernship.chess.statistics.Statistics;
 import neointernship.web.client.communication.data.endgame.EndGame;
 import neointernship.web.client.communication.data.endgame.IEndGame;
@@ -88,6 +89,7 @@ public class Lobby extends Thread {
 
         //TODO:
         GameLogger.addLogger(lobbyId);
+        MediatorLogger.addLogger(lobbyId);
 
         gameLoop = new GameLoop(mediator, possibleActionList, board, activeColorController, storyGame);
 
@@ -118,6 +120,7 @@ public class Lobby extends Thread {
         for (final UserConnection userConnection : connectionController.getConnections()) {
             final BufferedWriter out = userConnection.getOut();
             final IMessage msg = new Message(ClientCodes.INIT_GAME);
+           // mediator.updateMediator();
             final IInitGame initGame = new InitGame(mediator, board, userConnection.getColor());
 
             try {
@@ -186,6 +189,7 @@ public class Lobby extends Thread {
         while (gameLoop.isAlive()) {
             connectionController.update();
             connection = connectionController.getCurrentConnection();
+            MediatorLogger.getLogger(lobbyId).logMediatorAction(mediator, board);
 
             TurnStatus turnStatus = null;
             IAnswer answer = null;

@@ -11,6 +11,9 @@ import neointernship.chess.game.model.playmap.field.Field;
 import neointernship.chess.game.model.playmap.field.IField;
 import neointernship.web.client.communication.serializer.field.FieldDeserializer;
 import neointernship.web.client.communication.serializer.field.FieldSerializer;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.MapIterator;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,11 +29,14 @@ public class Mediator implements IMediator, Cloneable {
     @JsonProperty
     @JsonSerialize(keyUsing = FieldSerializer.class)
     @JsonDeserialize(keyUsing = FieldDeserializer.class)
-    private final HashMap<IField, Figure> mediator;
+    private final Map<IField, Figure> mediator;
+    //private final BidiMap<IField, Figure> mediator;
+    private final BidiMap<IField, Figure> mediatorBidi;
 
     @JsonCreator
     public Mediator() {
         mediator = new HashMap<>();
+        mediatorBidi = new DualHashBidiMap<>();
     }
 
     public Mediator(final IMediator mediator) {
@@ -58,6 +64,12 @@ public class Mediator implements IMediator, Cloneable {
         }
     }
 
+    @Override
+    public void updateMediator() {
+        mediatorBidi.clear();
+        mediatorBidi.putAll(mediator);
+    }
+
     /**
      * Добавление новой связи
      *
@@ -67,16 +79,19 @@ public class Mediator implements IMediator, Cloneable {
     @Override
     public void addNewConnection(final IField field, final Figure figure) {
         mediator.put(field, figure);
+        mediatorBidi.put(field, figure);
     }
 
     @Override
     public void deleteConnection(final IField field) {
         mediator.remove(field);
+        mediatorBidi.remove(field);
     }
 
     @Override
     public void clear() {
         mediator.clear();
+        mediatorBidi.clear();
     }
 
     @Override
@@ -102,8 +117,6 @@ public class Mediator implements IMediator, Cloneable {
 
     @Override
     public Collection<Figure> getFigures(final Color color) {
-        assert (color != null);
-        assert (getFigures() != null);
         return getFigures()
                 .stream()
                 .filter(f -> f.getColor() == color)
@@ -126,14 +139,15 @@ public class Mediator implements IMediator, Cloneable {
      * @return поле.
      */
     public IField getField(final Figure figure) {
-        final Set<Map.Entry<IField, Figure>> entrySet = mediator.entrySet();
+        /*final Set<Map.Entry<IField, Figure>> entrySet = mediator.entrySet();
 
         for (final Map.Entry<IField, Figure> pair : entrySet) {
             if (Objects.equals(figure, pair.getValue())) {
                 return pair.getKey();
             }
         }
-        return null;
+        return null;*/
+        return mediatorBidi.getKey(figure);
     }
 
     @Override
@@ -141,20 +155,20 @@ public class Mediator implements IMediator, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Mediator mediator1 = (Mediator) o;
-        return Objects.equals(mediator, mediator1.mediator);
+        return Objects.equals(mediatorBidi, mediator1.mediatorBidi);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mediator);
+        return Objects.hash(mediatorBidi);
     }
 
     @Override
     @JsonValue
     public String toString() {
         String string = "";
-        for (final IField field : mediator.keySet()) {
-            string += "<" + field.toString() + ";" + mediator.get(field).toString() + ">";
+        for (final IField field : mediatorBidi.keySet()) {
+            string += "<" + field.toString() + ";" + mediatorBidi.get(field).toString() + ">";
         }
         return string;
     }

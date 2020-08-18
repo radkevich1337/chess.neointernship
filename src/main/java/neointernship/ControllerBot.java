@@ -9,7 +9,8 @@ import neointernship.web.client.communication.message.ModelMessageReaction;
 import neointernship.web.client.communication.serializer.MessageSerializer;
 import neointernship.web.client.controller.Connection;
 import neointernship.web.client.player.APlayer;
-import neointernship.web.client.player.BotOne;
+import neointernship.web.client.player.Bots.BotOne;
+import neointernship.web.client.player.Bots.BotTwo;
 import neointernship.web.client.player.RandomBot;
 
 import java.io.*;
@@ -62,13 +63,15 @@ public class ControllerBot implements Runnable {
                 e.printStackTrace();
             }
         }
-        gameTime = LocalTime.ofSecondOfDay(LocalTime.now().toSecondOfDay()  - startTime.toSecondOfDay() );
+        gameTime = LocalTime.ofSecondOfDay(LocalTime.now().toSecondOfDay() - startTime.toSecondOfDay());
         System.out.println(gameTime);
     }
 
     private void initPlayer() {
         if (botType == "One") {
             player = new BotOne(color, name, new InputVoid());
+        } else if (botType == "Two") {
+            player = new BotTwo(color, name, new InputVoid());
         } else {
             player = new RandomBot(color, name, new InputVoid());
         }
