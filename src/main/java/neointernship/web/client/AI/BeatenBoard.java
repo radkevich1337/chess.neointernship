@@ -10,19 +10,19 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class BeatenBoard {
-    private static HashMap<IField, Float> beatenBoard;
-    private static HashMap<Class, Float> figureCost;
+    private static HashMap<IField, Integer> beatenBoard;
+    private static HashMap<Class, Integer> figureCost;
 
     private BeatenBoard() {
         beatenBoard = new HashMap<>();
         figureCost = new HashMap<>();
 
-        figureCost.put(Queen.class, 5 - 3.03f);
-        figureCost.put(Rook.class, 5 - 2.68f);
-        figureCost.put(Bishop.class, 5 - 2.54f);
-        figureCost.put(Knight.class, 5 - 2.46f);
-        figureCost.put(Pawn.class, 5 - 2f);
-        figureCost.put(King.class, 5 - 4f);
+        figureCost.put(Queen.class, 1);
+        figureCost.put(Rook.class, 2);
+        figureCost.put(Bishop.class, 2);
+        figureCost.put(Knight.class, 2);
+        figureCost.put(Pawn.class, 3);
+        figureCost.put(King.class, 1);
     }
 
     public static void init(IBoard board){
@@ -31,7 +31,7 @@ public class BeatenBoard {
 
         for (int i = 0; i < board.getSize(); i++){
             for (int j = 0; j < board.getSize(); j++){
-                beatenBoard.put(board.getField(i, j), 0.f);
+                beatenBoard.put(board.getField(i, j), 0);
             }
         }
     }
@@ -40,17 +40,16 @@ public class BeatenBoard {
         for (IField field : fields) {
             Figure figure = mediator.getFigure(field);
             if (figure != null){
-                float count = beatenBoard.get(field);
-                //float cost = figureCost.get(figure.getClass());
-                //count += color == Color.WHITE ? cost : -1 * cost;
-                count += color == Color.WHITE ? 1 : -1;
-                beatenBoard.put(field, count);
+                /*int count = beatenBoard.get(field);
+                float cost = figureCost.get(figure.getClass());
+                count += color == figure.getColor() ? cost : -cost;
+                //count += color == Color.WHITE ? 1 : -1;
+                beatenBoard.put(field, count);*/
             }
-
         }
     }
 
-    public static Float getBeatenFieldCount(IField field) {
+    public static Integer getBeatenFieldCount(IField field) {
         assert (beatenBoard.get(field) != null);
         assert (field != null);
         return beatenBoard.get(field);

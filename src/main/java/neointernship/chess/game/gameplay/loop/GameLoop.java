@@ -3,6 +3,7 @@ package neointernship.chess.game.gameplay.loop;
 import neointernship.chess.game.gameplay.activecolorcontroller.ActiveColorController;
 import neointernship.chess.game.gameplay.activecolorcontroller.IActiveColorController;
 import neointernship.chess.game.gameplay.figureactions.IPossibleActionList;
+import neointernship.chess.game.gameplay.figureactions.PossibleActionList;
 import neointernship.chess.game.gameplay.gameprocesscontroller.GameProcessController;
 import neointernship.chess.game.gameplay.gameprocesscontroller.IGameProcessController;
 import neointernship.chess.game.gameplay.gamestate.controller.GameStateController;
@@ -11,6 +12,7 @@ import neointernship.chess.game.gameplay.gamestate.state.IGameState;
 import neointernship.chess.game.model.answer.IAnswer;
 import neointernship.chess.game.model.enums.Color;
 import neointernship.chess.game.model.mediator.IMediator;
+import neointernship.chess.game.model.mediator.Mediator;
 import neointernship.chess.game.model.playmap.board.IBoard;
 import neointernship.chess.game.story.IStoryGame;
 import neointernship.web.client.communication.message.TurnStatus;
@@ -51,10 +53,16 @@ public class GameLoop implements IGameLoop {
     }
 
     public GameLoop(IGameLoop gameLoop) {
-        this.activeColorController = new ActiveColorController(gameLoop.getActiveColorController());
-        this.gameStateController = new GameStateController(gameLoop.getGameStateController());
-        this.gameProcessController = new GameProcessController(gameLoop.getGameProcessController());
-        this.activeColor = gameLoop.getActiveColor();
+        this.possibleActionList = new PossibleActionList(gameLoop.getPossibleActionList());
+        this.mediator = possibleActionList.getMediator();
+        this.storyGame = possibleActionList.getStoryGame();
+
+
+        this.activeColorController = gameLoop.getActiveColorController();
+
+        gameStateController = new GameStateController(possibleActionList, mediator, storyGame);
+
+        gameProcessController = new GameProcessController(mediator, possibleActionList, possibleActionList.getBoard(), storyGame);
     }
 
     /**

@@ -48,7 +48,7 @@ public class BotOne extends APlayer {
 
         this.boardView = new BoardView(mediator, board);
         if (!input.isVoid()) boardView.display();
-        this.turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color);
+        this.turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color, true, -10);
     }
 
     @Override
