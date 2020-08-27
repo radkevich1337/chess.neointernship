@@ -34,7 +34,7 @@ public class ControllerBot implements Runnable {
     private int i = 0;
 
     public ControllerBot(int i, String botType, Color color) {
-        name = "bot" + i % 2;
+        name = "bot " + i % 2;
         this.i = i;
         this.botType = botType;
         this.color = color;

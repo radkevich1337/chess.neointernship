@@ -7,9 +7,9 @@ public class ChessLabel extends JLabel {
     private final String s;
 
     Font font = new Font("Ariel", Font.PLAIN, 24);
-    Color bgLight = new Color(222, 184, 135);
-    Color bgDark = new Color(139, 69, 19);
-    Color sideLight = new Color(245, 245, 245);
+    Color bgLight = new Color(255, 255, 250);
+    Color bgDark = new Color(87, 180, 80);
+    Color sideLight = new Color(255, 255, 250);
 
     public ChessLabel(String s) {
         super(s);

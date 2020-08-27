@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 public class BotOne extends APlayer {
-    private static final int DEPTH = 3;
+    private static final int DEPTH = 1;
 
     private BoardView boardView;
     private IPossibleActionList possibleActionList;
@@ -48,7 +48,7 @@ public class BotOne extends APlayer {
 
         this.boardView = new BoardView(mediator, board);
         if (!input.isVoid()) boardView.display();
-        this.turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color, true, -10);
+        this.turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color, true, -50);
     }
 
     @Override

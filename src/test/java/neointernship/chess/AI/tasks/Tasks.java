@@ -68,7 +68,7 @@ public class Tasks {
         activeColorController = new ActiveColorController();
 
         gameLoop = new GameLoop(mediator, possibleActionList, board, activeColorController, storyGame);
-        turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color);
+        turnGenerator = new TurnGenerator(board, mediator, storyGame, possibleActionList, color, true, 0);
     }
 
     private static void initGameMap(String string) {

@@ -58,7 +58,7 @@ public class Controller {
             final Color color = input.getColor();
             player = new Player(color, name, input);
         } else {
-            name = "random bot";
+            name = "Andrey";
             player = new BotOne(Color.BOTH, name, input);
         }
 
@@ -66,7 +66,7 @@ public class Controller {
     }
 
     private void startConnection() {
-        connection = new Connection();
+        connection = new Connection("135.181.85.225", 8081);
         connection.connection();
 
         socket = connection.getSocket();

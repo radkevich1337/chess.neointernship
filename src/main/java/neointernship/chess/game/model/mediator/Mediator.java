@@ -117,7 +117,11 @@ public class Mediator implements IMediator, Cloneable {
 
     @Override
     public Collection<Figure> getFigures(final Color color) {
-        return getFigures()
+        /*Collection<Figure> list = new ArrayList<>();
+        for (Figure figure: getFigures()){
+            if (figure.getColor() == color) list.add(figure);
+        }*/
+        return /*list;*/getFigures()
                 .stream()
                 .filter(f -> f.getColor() == color)
                 .collect(Collectors.toList());
